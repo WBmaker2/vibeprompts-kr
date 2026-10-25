@@ -396,23 +396,29 @@
   <script src="https://cdn.tailwindcss.com"></script>
   ${fontLink}
   <style>
-    html, body { margin: 0; padding: 0; min-height: 100%; background: #ffffff; }
+    html { margin: 0; padding: 0; background: #ffffff; }
+    body { margin: 0; padding: 16px; background: #ffffff; box-sizing: border-box; }
   </style>
 </head>
-<body class="p-4 sm:p-6 md:p-8 flex items-center justify-center min-h-screen bg-neutral-50/60">
-  <div class="w-full">
+<body>
+  <div id="preview-root" style="width: 100%; box-sizing: border-box;">
     ${rawHtml}
   </div>
   <script>
+    var lastSentHeight = 0;
     var post = function () {
-      parent.postMessage(
-        { type: "vp-height", height: Math.ceil(document.body.getBoundingClientRect().height) },
-        "*"
-      );
+      var root = document.getElementById("preview-root");
+      if (!root) return;
+      var h = Math.ceil(root.offsetHeight || root.getBoundingClientRect().height);
+      if (h > 60 && Math.abs(h - lastSentHeight) > 8) {
+        lastSentHeight = h;
+        parent.postMessage({ type: "vp-height", height: h }, "*");
+      }
     };
-    addEventListener("load", post);
-    new ResizeObserver(post).observe(document.body);
-    setTimeout(post, 300);
+    window.addEventListener("load", function() { setTimeout(post, 120); });
+    if (window.ResizeObserver) {
+      new ResizeObserver(post).observe(document.getElementById("preview-root"));
+    }
   </script>
   ${scriptTag}
 </body>
@@ -421,11 +427,18 @@
     modalPreviewFrame.srcdoc = frameDoc;
   }
 
-  // Handle Resize message from iframe
+  // Handle Resize message from iframe (Clamped to avoid infinite expansion)
+  let currentPreviewHeight = 440;
   window.addEventListener("message", (e) => {
-    if (e.data && e.data.type === "vp-height" && e.data.height) {
+    if (e.data && e.data.type === "vp-height" && typeof e.data.height === "number") {
       if (modalPreviewFrame && modalStageCanvas?.dataset.size === "full") {
-        modalPreviewFrame.style.minHeight = Math.max(380, e.data.height + 20) + "px";
+        // Clamp height between 360px and 720px to prevent infinite scrolling
+        const targetH = Math.min(Math.max(e.data.height + 40, 360), 720);
+        if (Math.abs(targetH - currentPreviewHeight) > 8) {
+          currentPreviewHeight = targetH;
+          modalPreviewFrame.style.height = targetH + "px";
+          modalPreviewFrame.style.minHeight = targetH + "px";
+        }
       }
     }
   });
@@ -531,13 +544,17 @@
 
     if (size === "mobile") {
       modalPreviewFrame.style.width = "375px";
-      modalPreviewFrame.style.minHeight = "640px";
+      modalPreviewFrame.style.height = "600px";
+      modalPreviewFrame.style.minHeight = "600px";
     } else if (size === "tablet") {
       modalPreviewFrame.style.width = "768px";
-      modalPreviewFrame.style.minHeight = "540px";
+      modalPreviewFrame.style.height = "520px";
+      modalPreviewFrame.style.minHeight = "520px";
     } else {
       modalPreviewFrame.style.width = "100%";
-      modalPreviewFrame.style.minHeight = "440px";
+      const h = Math.min(Math.max(currentPreviewHeight, 380), 720);
+      modalPreviewFrame.style.height = h + "px";
+      modalPreviewFrame.style.minHeight = h + "px";
     }
   }
 
