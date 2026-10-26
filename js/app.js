@@ -230,20 +230,20 @@
     if (cart.size === 0) return;
     const items = Array.from(cart).map((slug) => promptsMap[slug]).filter(Boolean);
 
-    let prompt = `당신은 최고의 웹 UI/UX 엔지니어이자 풀스택 프론트엔드 개발자입니다.\n`;
-    prompt += `Tailwind CSS를 사용하여 아래 ${items.length}개 섹션으로 구성된 모던하고 유기적인 완성형 반응형 랜딩페이지를 제작해주세요.\n\n`;
-    prompt += `[핵심 공통 가이드라인]\n`;
-    prompt += `1. 일관된 디자인 시스템: 모든 섹션은 통일된 폰트, 세련된 중립 톤 색상 팔레트, 여백 시스템, border-radius를 공유해야 합니다.\n`;
-    prompt += `2. 반응형 최적화: 모바일(375px), 태블릿(768px), 데스크톱(1280px+)에서 모두 완벽하게 작동해야 합니다.\n`;
-    prompt += `3. 한국어 텍스트: 모든 헤드라인, 본문, 버튼, 폼 레이블을 자연스러운 한국어 카피로 작성해주세요.\n\n`;
-    prompt += `[포함될 섹션 상세 명세]\n`;
+    let prompt = `당신은 최고의 웹 화면 설계자이자 프런트엔드 개발자입니다.\n`;
+    prompt += `테일윈드 스타일을 활용하여 아래 ${items.length}개 영역으로 구성된 세련되고 유기적인 완성형 반응형 웹페이지를 제작해 주세요.\n\n`;
+    prompt += `[핵심 공통 기준]\n`;
+    prompt += `1. 일관된 디자인 체계: 모든 영역은 통일된 글꼴, 세련된 무채색 중립 톤 색상 조합, 여백 체계, 모서리 곡률을 공유해야 합니다.\n`;
+    prompt += `2. 반응형 최적화: 모바일(375픽셀), 태블릿(768픽셀), 데스크톱(1280픽셀 이상) 화면에서 모두 완벽하게 작동해야 합니다.\n`;
+    prompt += `3. 한국어 문구: 모든 제목, 본문, 버튼, 입력 양식 이름을 자연스러운 한국어 문구로 작성해 주세요.\n\n`;
+    prompt += `[포함될 영역 상세 명세]\n`;
 
     items.forEach((item, idx) => {
-      prompt += `\n--- 섹션 ${idx + 1}: [${item.catKo}] ${item.titleKo} ---\n`;
+      prompt += `\n--- 영역 ${idx + 1}: [${item.catKo}] ${item.titleKo} ---\n`;
       prompt += `${item.promptKo || item.promptEn}\n`;
     });
 
-    copyText(prompt, "통합 랜딩페이지 마스터 프롬프트가 복사되었습니다!");
+    copyText(prompt, "통합 웹페이지 마스터 프롬프트가 복사되었습니다!");
   }
 
   // Filter Logic
@@ -353,17 +353,17 @@
 
     const directives = [];
     if (customFw === "react") {
-      directives.push("React (Next.js App Router, Tailwind CSS, lucide-react 아이콘) 컴포넌트로 작성해주세요. TypeScript 인터페이스(Props)를 포함해주세요.");
+      directives.push("리액트 및 넥스트 라우터 환경에서 테일윈드 스타일과 아이콘 라이브러리를 활용한 단일 화면 구성 요소로 작성해 주세요. 타입스크립트 속성 정의도 함께 포함해 주세요.");
     } else if (customFw === "vue") {
-      directives.push("Vue 3 (Single File Component <template><script setup lang=\"ts\">) 및 Tailwind CSS로 작성해주세요.");
+      directives.push("뷰3 단일 파일 구성 요소 구조와 테일윈드 스타일을 활용하여 타입스크립트 기반으로 작성해 주세요.");
     }
 
     if (customKoreanUi) {
-      directives.push("컴포넌트 내 모든 제목, 안내 문구, 버튼 레이블, 플레이스홀더 텍스트를 자연스럽고 세련된 한국어로 작성해주세요.");
+      directives.push("화면 구성 요소 내 모든 제목, 안내 문구, 버튼 이름, 입력창 안내 문구를 자연스럽고 세련된 한국어로 작성해 주세요.");
     }
 
     if (customDarkMode) {
-      directives.push("Tailwind CSS의 'dark:' 유틸리티 클래스를 적용하여 라이트 모드와 다크 모드를 모두 완벽하게 지원하도록 스타일링해주세요.");
+      directives.push("테일윈드 다크 모드 규칙을 적용하여 밝은 화면과 어두운 화면을 모두 완벽하게 지원하도록 스타일을 지정해 주세요.");
     }
 
     if (directives.length > 0) {
